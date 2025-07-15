@@ -1,5 +1,6 @@
 package kh.edu.istad.mobilebankingapi.service;
 
+import jakarta.transaction.Transactional;
 import kh.edu.istad.mobilebankingapi.dto.CreateCustomerRequest;
 import kh.edu.istad.mobilebankingapi.dto.CustomerResponse;
 import kh.edu.istad.mobilebankingapi.dto.UpdateCustomer;
@@ -7,6 +8,9 @@ import kh.edu.istad.mobilebankingapi.dto.UpdateCustomer;
 import java.util.List;
 
 public interface CustomerService {
+    @Transactional
+    void disableByPhoneNumber(String phoneNumber);
+
     List<CustomerResponse> getAllCustomers();
     CustomerResponse getCustomerByEmail(String email);
     CustomerResponse createCustomer(CreateCustomerRequest createCustomerRequest);

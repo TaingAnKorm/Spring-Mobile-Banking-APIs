@@ -29,8 +29,14 @@ public class Customer {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String remark;
 
+    private String nationalCardId;
+
     @Column(nullable = false)
     private Boolean isDeleted;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_segment_id")
+    private CustomerSegment customerSegment;
 
     @OneToMany(mappedBy = "customer")
     private List<Account> accounts;

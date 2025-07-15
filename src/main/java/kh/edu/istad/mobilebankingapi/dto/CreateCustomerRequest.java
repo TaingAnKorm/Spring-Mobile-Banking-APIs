@@ -18,6 +18,10 @@ public record CreateCustomerRequest(
 
         String phoneNumber,
 
+        String nationalCardId,
+
+        Integer customerSegmentId,
+
         @NotBlank(message = "Remark is required")
         String remark
 ) {

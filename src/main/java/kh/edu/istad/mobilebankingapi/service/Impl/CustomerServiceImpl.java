@@ -1,11 +1,16 @@
 package kh.edu.istad.mobilebankingapi.service.Impl;
 
+import jakarta.transaction.Transactional;
 import kh.edu.istad.mobilebankingapi.domain.Customer;
+import kh.edu.istad.mobilebankingapi.domain.CustomerSegment;
+import kh.edu.istad.mobilebankingapi.domain.KYC;
 import kh.edu.istad.mobilebankingapi.dto.CreateCustomerRequest;
 import kh.edu.istad.mobilebankingapi.dto.CustomerResponse;
 import kh.edu.istad.mobilebankingapi.dto.UpdateCustomer;
 import kh.edu.istad.mobilebankingapi.mapper.CustomerMapper;
 import kh.edu.istad.mobilebankingapi.repository.CustomerRepository;
+import kh.edu.istad.mobilebankingapi.repository.CustomerSegmentRepository;
+import kh.edu.istad.mobilebankingapi.repository.KYCRepository;
 import kh.edu.istad.mobilebankingapi.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +26,17 @@ import java.util.List;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
+    private final CustomerSegmentRepository customerSegmentRepository;
+    private final KYCRepository kycRepository;
+
+    @Transactional
+    @Override
+    public void disableByPhoneNumber(String phoneNumber) {
+        if (!customerRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer phone number not found");
+        }
+        customerRepository.disableByPhoneNumber(phoneNumber);
+    }
 
     @Override
     public List<CustomerResponse> getAllCustomers() {
@@ -60,9 +76,26 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setGender(createCustomerRequest.gender());
         customer.setPhoneNumber(createCustomerRequest.phoneNumber());
         customer.setRemark(createCustomerRequest.remark());
+        customer.setNationalCardId(createCustomerRequest.nationalCardId());
+
+        CustomerSegment segment = null;
+        if (createCustomerRequest.customerSegmentId() != null) {
+            segment = customerSegmentRepository.findById(createCustomerRequest.customerSegmentId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Segment with id " + createCustomerRequest.customerSegmentId() + " does not exist"));
+            customer.setCustomerSegment(segment);
+        }
 
         customer.setIsDeleted(false);
         customer = customerRepository.save(customer);
+
+        KYC kyc = new KYC();
+        kyc.setCustomer(customer);
+        kyc.setNationalCardId(customer.getNationalCardId());
+        kyc.setIsVerified(false);
+        kyc.setIsDeleted(false);
+        kycRepository.save(kyc);
+
         return customerMapper.mapFromCustomerToCustomerResponse(customer);
     }
 
@@ -74,6 +107,13 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setEmail(updateCustomer.email());
         customer.setPhoneNumber(updateCustomer.phoneNumber());
         customer.setRemark(updateCustomer.remark());
+        customer.setNationalCardId(updateCustomer.nationalCardId());
+        if (updateCustomer.customerSegmentId() != null) {
+            CustomerSegment segment = customerSegmentRepository.findById(updateCustomer.customerSegmentId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                            "Segment with id " + updateCustomer.customerSegmentId() + " does not exist"));
+            customer.setCustomerSegment(segment);
+        }
         customer = customerRepository.save(customer);
         return customerMapper.mapFromCustomerToCustomerResponse(customer);
     }

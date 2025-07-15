@@ -6,6 +6,7 @@ public record AccountResponse(
         String actNo,
         String actCurrency,
         BigDecimal balance,
+        BigDecimal overLimit,
         Boolean isDeleted,
         Integer customerId,
         Integer accountTypeId

@@ -2,8 +2,10 @@ package kh.edu.istad.mobilebankingapi.dto;
 
 public record CustomerResponse(
         String fullName,
-        String gender,
-        String email
+        String email,
+        String phoneNumber,
+        String remark,
+        String nationalCardId,
+        String segmentName
 ) {
-
 }

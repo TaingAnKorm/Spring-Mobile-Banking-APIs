@@ -43,6 +43,18 @@ public class AccountServiceImpl implements AccountService {
         account.setActNo(createAccountRequest.actNo());
         account.setActCurrency(createAccountRequest.actCurrency());
         account.setBalance(createAccountRequest.balance());
+        if (customer.getCustomerSegment() != null) {
+            String segName = customer.getCustomerSegment().getName();
+            if ("Gold".equalsIgnoreCase(segName)) {
+                account.setOverLimit(new java.math.BigDecimal("50000"));
+            } else if ("Silver".equalsIgnoreCase(segName)) {
+                account.setOverLimit(new java.math.BigDecimal("10000"));
+            } else {
+                account.setOverLimit(new java.math.BigDecimal("5000"));
+            }
+        } else {
+            account.setOverLimit(new java.math.BigDecimal("0"));
+        }
         account.setCustomer(customer);
         account.setAccountType(accountType);
         account.setIsDeleted(false);

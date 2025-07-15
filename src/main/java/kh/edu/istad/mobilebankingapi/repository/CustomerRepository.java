@@ -9,4 +9,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Customer findByEmail(String email);
 
     Customer findByPhoneNumber(String phoneNumber);
+
+    void disableByPhoneNumber(String phoneNumber);
 }
