@@ -8,7 +8,6 @@ import kh.edu.istad.mobilebankingapi.dto.UpdateCustomer;
 import java.util.List;
 
 public interface CustomerService {
-    @Transactional
     void disableByPhoneNumber(String phoneNumber);
 
     List<CustomerResponse> getAllCustomers();

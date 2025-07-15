@@ -4,6 +4,7 @@ import kh.edu.istad.mobilebankingapi.dto.CreateAccountRequest;
 import kh.edu.istad.mobilebankingapi.dto.UpdateAccountRequest;
 
 import java.util.List;
+
 public interface AccountService {
     AccountResponse createNewAccount(CreateAccountRequest createAccountRequest);
     List<AccountResponse> findAllAccounts();
